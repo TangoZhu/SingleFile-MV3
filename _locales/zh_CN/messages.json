@@ -1533,5 +1533,14 @@
 	"saveScopeArticleNotFound": {
 		"message": "未在此页面识别到正文。",
 		"description": "Save scope popup: status when no article was detected"
+	},
+	"saveScopeFrameset": {
+		"message": "检测到框架页，将保存内层页面（$HOST$）。",
+		"description": "Save scope popup: note shown on frameset pages, $1 is the host of the frame that will be saved",
+		"placeholders": {
+			"host": {
+				"content": "$1"
+			}
+		}
 	}
 }

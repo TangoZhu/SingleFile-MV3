@@ -21,6 +21,9 @@ const statusElement = document.getElementById("status");
 const optionsLink = document.getElementById("open-options");
 
 let tab;
+// Where page scripts run and what is saved: the top frame, or the content frame of a frameset page
+let scriptTarget;
+let contentFrameId;
 
 document.querySelectorAll("[data-i18n]").forEach(element => {
 	element.textContent = chrome.i18n.getMessage(element.dataset.i18n) || element.dataset.i18n;
@@ -30,6 +33,7 @@ init();
 
 async function init() {
 	[tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+	scriptTarget = { tabId: tab.id };
 	savePageButton.addEventListener("click", () => save({}, cleanUpPage));
 	saveArticleButton.addEventListener("click", () => save({ selected: true, removedElementsSelector: "[" + EXCLUDE_ATTRIBUTE + "]" }, prepareArticle));
 	saveSelectionButton.addEventListener("click", () => save({ selected: true }, cleanUpPage));
@@ -38,8 +42,17 @@ async function init() {
 		chrome.runtime.openOptionsPage();
 		window.close();
 	});
+	let framesetNote = "";
 	try {
-		const [{ result }] = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: inspectPage });
+		// Frameset pages (e.g. "URL forwarding" pages: <frameset><frame src="real site">) have no content in the top frame:
+		// work on the frame containing the most text and save only this frame
+		const frame = await findContentFrame();
+		if (frame) {
+			contentFrameId = frame.frameId;
+			scriptTarget = { tabId: tab.id, frameIds: [frame.frameId] };
+			framesetNote = chrome.i18n.getMessage("saveScopeFrameset", [frame.result.host]) + "\n";
+		}
+		const [{ result }] = await chrome.scripting.executeScript({ target: scriptTarget, func: inspectPage });
 		if (result.selectionLength) {
 			saveSelectionButton.hidden = false;
 		}
@@ -47,16 +60,36 @@ async function init() {
 			// "Save article only" is the default action: highlighted and focused, Enter saves the article
 			saveArticleButton.disabled = false;
 			setDefaultButton(saveArticleButton);
-			statusElement.textContent = chrome.i18n.getMessage("saveScopeArticleFound", [String(result.articleLength)]);
+			statusElement.textContent = framesetNote + chrome.i18n.getMessage("saveScopeArticleFound", [String(result.articleLength)]);
 		} else {
 			setDefaultButton(savePageButton);
-			statusElement.textContent = chrome.i18n.getMessage("saveScopeArticleNotFound");
+			statusElement.textContent = framesetNote + chrome.i18n.getMessage("saveScopeArticleNotFound");
 		}
 	} catch (error) {
 		// Pages where scripts cannot run (chrome://, Web Store...): only the whole page can be tried
 		setDefaultButton(savePageButton);
-		statusElement.textContent = chrome.i18n.getMessage("saveScopeArticleNotFound");
+		statusElement.textContent = framesetNote + chrome.i18n.getMessage("saveScopeArticleNotFound");
 	}
+}
+
+async function findContentFrame() {
+	const [{ result: isFrameset }] = await chrome.scripting.executeScript({
+		target: { tabId: tab.id },
+		func: () => Boolean(document.body && document.body.tagName == "FRAMESET")
+	});
+	if (!isFrameset) {
+		return null;
+	}
+	const frames = await chrome.scripting.executeScript({
+		target: { tabId: tab.id, allFrames: true },
+		func: () => ({
+			top: window == window.top,
+			textLength: document.body ? document.body.innerText.length : 0,
+			host: location.host
+		})
+	});
+	return frames.filter(frame => frame.result && !frame.result.top)
+		.sort((frame1, frame2) => frame2.result.textLength - frame1.result.textLength)[0] || null;
 }
 
 function setDefaultButton(button) {
@@ -67,10 +100,14 @@ function setDefaultButton(button) {
 async function save(options, prepare) {
 	try {
 		// Expand collapsed content first (CSDN "展开" code blocks, "阅读全文"...), then prepare the chosen scope
-		await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: expandCollapsedContent });
-		await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: prepare });
+		await chrome.scripting.executeScript({ target: scriptTarget, func: expandCollapsedContent });
+		await chrome.scripting.executeScript({ target: scriptTarget, func: prepare });
 	} catch (error) {
 		// ignored: the page may not be scriptable, SingleFile reports its own errors
+	}
+	if (contentFrameId !== undefined) {
+		// SingleFile's "save frame" feature: only the content frame of the frameset page is saved
+		options = Object.assign({}, options, { frameId: contentFrameId });
 	}
 	await chrome.runtime.sendMessage({ method: SAVE_METHOD, tabId: tab.id, options });
 	window.close();

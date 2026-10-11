@@ -1533,5 +1533,14 @@
 	"saveScopeArticleNotFound": {
 		"message": "No article detected on this page.",
 		"description": "Save scope popup: status when no article was detected"
+	},
+	"saveScopeFrameset": {
+		"message": "Frameset page: the inner page ($HOST$) will be saved.",
+		"description": "Save scope popup: note shown on frameset pages, $1 is the host of the frame that will be saved",
+		"placeholders": {
+			"host": {
+				"content": "$1"
+			}
+		}
 	}
 }
