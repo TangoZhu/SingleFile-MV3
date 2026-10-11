@@ -1504,5 +1504,34 @@
 	"menusContextHelp": {
 		"message": "此条目不会在所选上下文（$1）中显示。",
 		"description": "Menu editor note for an entry whose contexts exclude the context selected above the list"
+	},
+	"saveScopePage": {
+		"message": "保存整页",
+		"description": "Save scope popup: button to save the whole page"
+	},
+	"saveScopeArticle": {
+		"message": "只保存正文",
+		"description": "Save scope popup: button to save only the main article"
+	},
+	"saveScopeSelection": {
+		"message": "保存选中内容",
+		"description": "Save scope popup: button to save the current selection"
+	},
+	"saveScopeOptions": {
+		"message": "选项…",
+		"description": "Save scope popup: link to the options page"
+	},
+	"saveScopeArticleFound": {
+		"message": "已识别正文（约 $COUNT$ 字），页面上已用蓝框标出。",
+		"description": "Save scope popup: status when the article was detected, $1 is the number of characters",
+		"placeholders": {
+			"count": {
+				"content": "$1"
+			}
+		}
+	},
+	"saveScopeArticleNotFound": {
+		"message": "未在此页面识别到正文。",
+		"description": "Save scope popup: status when no article was detected"
 	}
 }

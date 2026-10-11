@@ -1504,5 +1504,34 @@
 	"menusContextHelp": {
 		"message": "This entry is not shown in the selected context ($1).",
 		"description": "Menu editor note for an entry whose contexts exclude the context selected above the list"
+	},
+	"saveScopePage": {
+		"message": "Save whole page",
+		"description": "Save scope popup: button to save the whole page"
+	},
+	"saveScopeArticle": {
+		"message": "Save article only",
+		"description": "Save scope popup: button to save only the main article"
+	},
+	"saveScopeSelection": {
+		"message": "Save selection",
+		"description": "Save scope popup: button to save the current selection"
+	},
+	"saveScopeOptions": {
+		"message": "Options…",
+		"description": "Save scope popup: link to the options page"
+	},
+	"saveScopeArticleFound": {
+		"message": "Article detected (about $COUNT$ characters), outlined in blue on the page.",
+		"description": "Save scope popup: status when the article was detected, $1 is the number of characters",
+		"placeholders": {
+			"count": {
+				"content": "$1"
+			}
+		}
+	},
+	"saveScopeArticleNotFound": {
+		"message": "No article detected on this page.",
+		"description": "Save scope popup: status when no article was detected"
 	}
 }

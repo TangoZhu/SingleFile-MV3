@@ -1504,5 +1504,34 @@
 	"menusContextHelp": {
 		"message": "這個項目不會在所選的情境（$1）中顯示。",
 		"description": "Menu editor note for an entry whose contexts exclude the context selected above the list"
+	},
+	"saveScopePage": {
+		"message": "儲存整頁",
+		"description": "Save scope popup: button to save the whole page"
+	},
+	"saveScopeArticle": {
+		"message": "只儲存正文",
+		"description": "Save scope popup: button to save only the main article"
+	},
+	"saveScopeSelection": {
+		"message": "儲存選取內容",
+		"description": "Save scope popup: button to save the current selection"
+	},
+	"saveScopeOptions": {
+		"message": "選項…",
+		"description": "Save scope popup: link to the options page"
+	},
+	"saveScopeArticleFound": {
+		"message": "已識別正文（約 $COUNT$ 字），頁面上已用藍框標出。",
+		"description": "Save scope popup: status when the article was detected, $1 is the number of characters",
+		"placeholders": {
+			"count": {
+				"content": "$1"
+			}
+		}
+	},
+	"saveScopeArticleNotFound": {
+		"message": "未在此頁面識別到正文。",
+		"description": "Save scope popup: status when no article was detected"
 	}
 }

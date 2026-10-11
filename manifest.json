@@ -66,7 +66,8 @@
 			"64": "src/ui/resources/icon_64.png",
 			"128": "src/ui/resources/icon_128.png"
 		},
-		"default_title": "__MSG_buttonDefaultTooltip__"
+		"default_title": "__MSG_buttonDefaultTooltip__",
+		"default_popup": "src/ui/pages/save-scope.html"
 	},
 	"commands": {
 		"save-selected-tabs": {

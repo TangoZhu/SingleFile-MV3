@@ -39,8 +39,15 @@ import * as tabs from "./tabs.js";
 import * as externalCapturePermissions from "./external-capture-permissions.js";
 import * as externalMesssages from "./external-messages.js";
 import * as ui from "./../../ui/bg/index.js";
+import * as business from "./business.js";
 
 browser.runtime.onMessage.addListener((message, sender) => {
+	// Save scope popup (src/ui/pages/save-scope.html): save the whole page, the article or the selection
+	if (message.method == "saveScope.save") {
+		return browser.tabs.get(message.tabId)
+			.then(tab => business.saveTabs([tab], message.options || {}))
+			.then(() => ({}));
+	}
 	if (message.method.startsWith("tabs.")) {
 		return tabs.onMessage(message, sender);
 	}
